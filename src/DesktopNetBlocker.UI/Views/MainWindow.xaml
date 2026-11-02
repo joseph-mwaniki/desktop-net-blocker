@@ -1,0 +1,405 @@
+<Window x:Class="DesktopNetBlocker.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:DesktopNetBlocker.UI.ViewModels"
+        Title="Desktop Net Blocker - Impulse Control &amp; Network Restriction"
+        Width="1050" Height="720"
+        MinWidth="900" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="Segoe UI Variable Text, Segoe UI, sans-serif">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Header Bar -->
+            <RowDefinition Height="64" />
+            <!-- Main Content Area with Navigation -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- TOP HEADER -->
+        <Border Grid.Row="0" Background="#141418" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1" Padding="24,0">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#2563EB" CornerRadius="8" Width="36" Height="36" Margin="0,0,14,0">
+                        <TextBlock Text="🛡" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="DESKTOP NET BLOCKER" FontWeight="Bold" FontSize="15" Foreground="White" />
+                        <TextBlock Text="Windows 11 Delayed Impulse Enforcement" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Navigation Tabs -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="20,0">
+                    <Button Content="Dashboard" Command="{Binding NavigateDashboardCommand}" Margin="4,0" Padding="14,6" Style="{StaticResource SecondaryButton}" />
+                    <Button Content="Blocklist" Command="{Binding NavigateBlocklistCommand}" Margin="4,0" Padding="14,6" Style="{StaticResource SecondaryButton}" />
+                    <Button Content="Authorization" Command="{Binding NavigateAuthorizationCommand}" Margin="4,0" Padding="14,6" Style="{StaticResource SecondaryButton}" />
+                    <Button Content="Settings" Command="{Binding NavigateSettingsCommand}" Margin="4,0" Padding="14,6" Style="{StaticResource SecondaryButton}" />
+                </StackPanel>
+
+                <!-- Status Pill -->
+                <Border Grid.Column="2" Background="#1E293B" BorderBrush="#3B82F6" BorderThickness="1" CornerRadius="16" Padding="12,5">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="8" Height="8" Fill="#10B981" Margin="0,0,8,0" />
+                        <TextBlock Text="{Binding DashboardVM.ServiceStatusText}" FontSize="11" FontWeight="SemiBold" Foreground="#93C5FD" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- MAIN BODY VIEW SWITCHER -->
+        <Grid Grid.Row="1" Margin="24,20">
+            <ContentControl Content="{Binding CurrentView}">
+                <ContentControl.Resources>
+                    <!-- DASHBOARD VIEW TEMPLATE -->
+                    <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,0,18">
+                                <!-- Top Overview Cards -->
+                                <UniformGrid Columns="3" Margin="0,0,0,18">
+                                    <!-- Card 1: Protection Status -->
+                                    <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18" Margin="0,0,12,0">
+                                        <StackPanel>
+                                            <TextBlock Text="ENFORCEMENT ENGINE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <TextBlock Text="ACTIVE &amp; ENFORCED" FontSize="20" FontWeight="Bold" Foreground="#10B981" Margin="0,8,0,4" />
+                                            <TextBlock Text="DNS Proxy + Windows Firewall active" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Card 2: Blocked Domains Count -->
+                                    <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18" Margin="6,0,6,0">
+                                        <StackPanel>
+                                            <TextBlock Text="BLOCKED WEBSITES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <TextBlock Text="{Binding BlockedDomainsCount}" FontSize="24" FontWeight="Bold" Foreground="White" Margin="0,6,0,4" />
+                                            <TextBlock Text="Protected from immediate removal" FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Card 3: Pending Authorization -->
+                                    <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18" Margin="12,0,0,0">
+                                        <StackPanel>
+                                            <TextBlock Text="PENDING AUTHORIZATIONS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" />
+                                            <TextBlock Text="{Binding ActiveRequestSummary}" FontSize="13" FontWeight="SemiBold" Foreground="#F59E0B" Margin="0,10,0,4" TextWrapping="Wrap" />
+                                            <TextBlock Text="Escalating cooldowns on cancellation" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+
+                                <!-- Core Philosophy Banner -->
+                                <Border Background="#1C1E26" BorderBrush="#3B82F6" BorderThickness="1" CornerRadius="8" Padding="16,14" Margin="0,0,0,18">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="💡" FontSize="24" Margin="0,0,16,0" VerticalAlignment="Center" />
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="Self-Control Principle: Delayed Gratification &amp; Impulse Friction" FontWeight="Bold" FontSize="13" Foreground="#93C5FD" />
+                                            <TextBlock Text="Adding a distraction is immediate. Removing a restriction requires a 3-day waiting countdown + explicit confirmation + a 3-day final delay. Temporary impulses fade with time."
+                                                       FontSize="11.5" Foreground="#D1D5DB" Margin="0,3,0,0" TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Recent Events Table -->
+                                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,12">
+                                            <TextBlock Text="Recent Network Restriction &amp; Policy Events" FontWeight="Bold" FontSize="14" Foreground="White" VerticalAlignment="Center" />
+                                            <Button Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}" HorizontalAlignment="Right" Padding="10,4" FontSize="11" />
+                                        </Grid>
+                                        <DataGrid ItemsSource="{Binding RecentEvents}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#2A2A33"
+                                                  RowBackground="Transparent" MaxHeight="260">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Timestamp (UTC)" Binding="{Binding Timestamp, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}" Width="150" />
+                                                <DataGridTextColumn Header="Event Type" Binding="{Binding EventType}" Width="160" />
+                                                <DataGridTextColumn Header="Target Domain" Binding="{Binding Domain}" Width="180" />
+                                                <DataGridTextColumn Header="Details" Binding="{Binding Details}" Width="*" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+
+                    <!-- BLOCKLIST VIEW TEMPLATE -->
+                    <DataTemplate DataType="{x:Type vm:BlocklistViewModel}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Add Domain Form Card -->
+                            <Border Grid.Row="0" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18" Margin="0,0,0,16">
+                                <StackPanel>
+                                    <TextBlock Text="Add Domains to Immutable Blocklist" FontWeight="Bold" FontSize="14" Foreground="White" />
+                                    <TextBlock Text="Enter one or multiple domains (separate with newlines or commas). Added domains become blocked system-wide immediately."
+                                               FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,12" />
+
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="140" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Domain Input -->
+                                        <TextBox Grid.Column="0" Text="{Binding DomainInputText, UpdateSourceTrigger=PropertyChanged}"
+                                                 Background="#0F0F12" Foreground="White" BorderBrush="{StaticResource BorderBrush}"
+                                                 Padding="10,8" Margin="0,0,10,0" FontSize="13" />
+
+                                        <!-- Category Selector -->
+                                        <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding NewDomainCategory}"
+                                                  Background="#0F0F12" Foreground="White" BorderBrush="{StaticResource BorderBrush}"
+                                                  Margin="0,0,10,0" Padding="10,6" VerticalContentAlignment="Center" />
+
+                                        <!-- Matching Mode Selector -->
+                                        <ComboBox Grid.Column="2" SelectedIndex="1" SelectedItem="{Binding SelectedMatchingMode}"
+                                                  Background="#0F0F12" Foreground="White" BorderBrush="{StaticResource BorderBrush}"
+                                                  Margin="0,0,10,0" Padding="10,6" VerticalContentAlignment="Center">
+                                            <ComboBoxItem Content="Exact" />
+                                            <ComboBoxItem Content="Subdomain (*.x)" />
+                                            <ComboBoxItem Content="Wildcard" />
+                                        </ComboBox>
+
+                                        <!-- Add Button -->
+                                        <Button Grid.Column="3" Content="🔒 BLOCK DOMAIN" Command="{Binding AddDomainCommand}" Style="{StaticResource ModernButton}" />
+                                    </Grid>
+
+                                    <TextBlock Text="{Binding StatusMessage}" FontSize="11" Foreground="#60A5FA" Margin="2,0,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Filter & Search Controls -->
+                            <Grid Grid.Row="1" Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="280" />
+                                    <ColumnDefinition Width="180" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBox Grid.Column="0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                         Background="#141418" Foreground="White" BorderBrush="{StaticResource BorderBrush}"
+                                         Padding="10,6" Margin="0,0,10,0" FontSize="12" />
+
+                                <ComboBox Grid.Column="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                                          Background="#141418" Foreground="White" BorderBrush="{StaticResource BorderBrush}"
+                                          Padding="10,6" Margin="0,0,10,0" />
+
+                                <Button Grid.Column="3" Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}" Padding="12,6" />
+                            </Grid>
+
+                            <!-- Domains List Table -->
+                            <Border Grid.Row="2" Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="12">
+                                <DataGrid ItemsSource="{Binding FilteredDomains}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
+                                          BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#2A2A33"
+                                          RowBackground="Transparent">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Domain Name" Binding="{Binding Domain}" Width="240" />
+                                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="140" />
+                                        <DataGridTextColumn Header="Matching Rule" Binding="{Binding MatchingMode}" Width="130" />
+                                        <DataGridTextColumn Header="Added Date" Binding="{Binding CreatedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Width="150" />
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110" />
+                                        <!-- Actions Column: REQUEST REMOVAL / TEMPORARY UNLOCK. NO DELETE BUTTONS! -->
+                                        <DataGridTemplateColumn Header="Delayed Actions" Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Content="Request Removal"
+                                                                Command="{Binding DataContext.RequestRemovalCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                CommandParameter="{Binding Id}"
+                                                                Style="{StaticResource DangerButton}"
+                                                                Padding="10,4" FontSize="11" Margin="0,0,8,0" />
+                                                        <Button Content="Temporary Unlock (2h)"
+                                                                Command="{Binding DataContext.RequestTemporaryUnlockCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                                CommandParameter="{Binding Id}"
+                                                                Style="{StaticResource SecondaryButton}"
+                                                                Padding="10,4" FontSize="11" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+
+                    <!-- AUTHORIZATION VIEW TEMPLATE -->
+                    <DataTemplate DataType="{x:Type vm:AuthorizationViewModel}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,0,18">
+                                <!-- Active Authorization Card -->
+                                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="24" Margin="0,0,0,18">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,16">
+                                            <TextBlock Text="{Binding StatusHeader}" FontWeight="Bold" FontSize="13" Foreground="#F59E0B" />
+                                            <TextBlock Text="{Binding TargetDeadlineText}" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" HorizontalAlignment="Right" />
+                                        </Grid>
+
+                                        <!-- Target Domain -->
+                                        <TextBlock Text="{Binding ActiveRequest.TargetDomain, FallbackValue='No Active Request'}"
+                                                   FontWeight="Bold" FontSize="26" Foreground="White" Margin="0,0,0,16" />
+
+                                        <!-- Countdown Visualizer -->
+                                        <Border Background="#0C0D11" BorderBrush="#252733" BorderThickness="1" CornerRadius="8" Padding="24,20" Margin="0,0,0,20">
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding CountdownText}"
+                                                           FontFamily="Consolas, Segoe UI Variable Display, Segoe UI"
+                                                           FontWeight="Bold" FontSize="44" Foreground="#60A5FA"
+                                                           HorizontalAlignment="Center" />
+                                                <TextBlock Text="DAYS   :   HOURS   :   MINUTES   :   SECONDS"
+                                                           FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"
+                                                           HorizontalAlignment="Center" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Action Buttons: Confirm & Cancel -->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="CONFIRM AUTHORIZATION" Command="{Binding ConfirmCommand}"
+                                                    Style="{StaticResource ModernButton}" Padding="20,10" FontSize="12" Margin="0,0,16,0" />
+                                            <Button Content="CANCEL REQUEST" Command="{Binding CancelCommand}"
+                                                    Style="{StaticResource DangerButton}" Padding="20,10" FontSize="12" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Cancellation Cooldowns & History Table -->
+                                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="18">
+                                    <StackPanel>
+                                        <TextBlock Text="Cancellation History &amp; Escalating Cooldowns" FontWeight="Bold" FontSize="14" Foreground="White" Margin="0,0,0,12" />
+                                        <DataGrid ItemsSource="{Binding CancellationHistories}" AutoGenerateColumns="False" IsReadOnly="True" Background="Transparent"
+                                                  BorderThickness="0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#2A2A33"
+                                                  RowBackground="Transparent" MaxHeight="240">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Target Domain" Binding="{Binding TargetDomain}" Width="180" />
+                                                <DataGridTextColumn Header="Cancelled At (UTC)" Binding="{Binding CancelledAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Width="160" />
+                                                <DataGridTextColumn Header="Count" Binding="{Binding CancellationCount}" Width="70" />
+                                                <DataGridTextColumn Header="Cooldown" Binding="{Binding ResultingCooldown}" Width="120" />
+                                                <DataGridTextColumn Header="Next Request Allowed" Binding="{Binding NextAllowedRequestAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Width="180" />
+                                                <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="*" />
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+
+                    <!-- SETTINGS VIEW TEMPLATE -->
+                    <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,0,0,18">
+                                <!-- Waiting Periods Policy Configuration Card -->
+                                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="20" Margin="0,0,0,18">
+                                    <StackPanel>
+                                        <TextBlock Text="Authorization Policy &amp; Waiting Periods" FontWeight="Bold" FontSize="15" Foreground="White" />
+                                        <TextBlock Text="All changes to waiting periods are subject to delayed authorization to prevent impulse disabling."
+                                                   FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,16" />
+
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="280" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Initial Waiting Period (Days):" VerticalAlignment="Center" Foreground="#E5E7EB" />
+                                            <TextBox Grid.Column="1" Text="{Binding InitialWaitingDays, UpdateSourceTrigger=PropertyChanged}" Background="#0F0F12" Foreground="White" Padding="8,5" />
+                                            <Button Grid.Column="2" Content="Request Change"
+                                                    Command="{Binding RequestPolicyChangeCommand}"
+                                                    CommandParameter="InitialWaitingPeriodDays"
+                                                    Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Margin="14,0,0,0" Padding="12,5" />
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="280" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Confirmation Delay (Days):" VerticalAlignment="Center" Foreground="#E5E7EB" />
+                                            <TextBox Grid.Column="1" Text="{Binding ConfirmationDelayDays, UpdateSourceTrigger=PropertyChanged}" Background="#0F0F12" Foreground="White" Padding="8,5" />
+                                            <Button Grid.Column="2" Content="Request Change"
+                                                    Command="{Binding RequestPolicyChangeCommand}"
+                                                    CommandParameter="ConfirmationDelayDays"
+                                                    Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Margin="14,0,0,0" Padding="12,5" />
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,12">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="280" />
+                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Temporary Access Duration (Hours):" VerticalAlignment="Center" Foreground="#E5E7EB" />
+                                            <TextBox Grid.Column="1" Text="{Binding TemporaryAccessHours, UpdateSourceTrigger=PropertyChanged}" Background="#0F0F12" Foreground="White" Padding="8,5" />
+                                            <Button Grid.Column="2" Content="Request Change"
+                                                    Command="{Binding RequestPolicyChangeCommand}"
+                                                    CommandParameter="TemporaryAccessDurationHours"
+                                                    Style="{StaticResource SecondaryButton}" HorizontalAlignment="Left" Margin="14,0,0,0" Padding="12,5" />
+                                        </Grid>
+
+                                        <Border Background="#161820" CornerRadius="6" Padding="14" Margin="0,10,0,0">
+                                            <TextBlock Text="Cancellation Cooldown Schedule: 1st cancellation = 7 days; 2nd cancellation = 14 days; 3rd+ cancellation = 30 days."
+                                                       FontSize="11.5" Foreground="#9CA3AF" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Floating Countdown Overlay Appearance Card -->
+                                <Border Background="{StaticResource CardBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="20">
+                                    <StackPanel>
+                                        <TextBlock Text="Floating Countdown Overlay Appearance" FontWeight="Bold" FontSize="15" Foreground="White" />
+                                        <TextBlock Text="Configure the translucent always-on-top countdown overlay appearance on your screen."
+                                                   FontSize="11.5" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,16" />
+
+                                        <Grid Margin="0,0,0,14">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="220" />
+                                                <ColumnDefinition Width="200" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Overlay Opacity:" VerticalAlignment="Center" Foreground="#E5E7EB" />
+                                            <Slider Grid.Column="1" Minimum="0.4" Maximum="1.0" Value="{Binding OverlayOpacity}" VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="2" Text="{Binding OverlayOpacity, StringFormat='{}{0:P0}'}" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="{StaticResource TextSecondaryBrush}" />
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,14">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="220" />
+                                                <ColumnDefinition Width="200" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Screen Position:" VerticalAlignment="Center" Foreground="#E5E7EB" />
+                                            <ComboBox Grid.Column="1" ItemsSource="{Binding AvailablePositions}" SelectedItem="{Binding OverlayPosition}"
+                                                      Background="#0F0F12" Foreground="White" BorderBrush="{StaticResource BorderBrush}" Padding="8,5" />
+                                        </Grid>
+
+                                        <CheckBox Content="Enable floating overlay for pending requests" IsChecked="{Binding OverlayEnabled}"
+                                                  Foreground="#E5E7EB" Margin="0,0,0,16" />
+
+                                        <Button Content="Save Appearance Settings" Command="{Binding SaveAppearanceSettingsCommand}"
+                                                Style="{StaticResource ModernButton}" HorizontalAlignment="Left" Padding="16,8" />
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>
