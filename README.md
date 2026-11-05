@@ -161,3 +161,4 @@ Test coverage includes:
 - Automatic re-locking of temporary access after 2 hours.
 - DNS binary packet parsing and `0.0.0.0` / `::` synthesis.
 - Hosts file synchronization and cleanup.
+
